@@ -169,6 +169,9 @@ def calculate_metrics(data, observer):
 
         # Unit vector values
         ux, uy, uz = unit_vector_components(d1['satlatitude'], d1['satlongitude'], d1['sataltitude'], observer['lat'], observer['lon'], observer['alt'])
+        # cartesian coordinates (no optimize please)
+        ecef_x, ecef_y, ecef_z = latlonalt_to_ecef(d1['satlatitude'], d1['satlongitude'], d1['sataltitude'])
+
 
 
         results.append({
@@ -181,7 +184,8 @@ def calculate_metrics(data, observer):
             'timestamp': d1['timestamp'],
             'visible': visible,
             'snr': snr,
-            'unit_vector': (ux, uy, uz)
+            'unit_vector': (ux, uy, uz),
+            'ecef': (ecef_x, ecef_y, ecef_z)
         })
 
     return results

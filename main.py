@@ -6,10 +6,14 @@ import datetime
 import os
 import sys
 import argparse
-import calculations
 import threading
+import matplotlib.pyplot as plt 
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 from collections import deque
 
+import calculations
 
 # Sets outputs to logs file
 def set_output_log():
@@ -44,7 +48,7 @@ def parse_args():
         "visible", "angular_velocity_az", "angular_velocity_el", "doppler_shift_hz",
         "slant_range_m", "time_delay_s", "snr", "unit_vector", "timestamp"
     ], help="Which metrics to display")
-
+    parser.add_argument("--plot", action = "store_true", help = "Enable plot that refreshes every 300 s")
     args = parser.parse_args()
     return args
 
@@ -108,6 +112,63 @@ def background_updater():
         sleep_duration = max(0, SECONDS - elapsed)
         # -1 since calculations rely on two points (one in future)
         time.sleep(sleep_duration-1)
+
+def plotting_updater():
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    try:
+        mng = plt.get_current_fig_manager()
+        mng.full_screen_toggle()
+    except:
+        try:
+            mng.window.state('zoomed')
+        except:
+            pass
+    ax.set_xlim(-7000000, 7000000)
+    ax.set_ylim(-7000000, 7000000)
+    ax.set_zlim(-7000000, 7000000)
+    ax.set_xlabel('X (m)')
+    ax.set_ylabel('Y (m)')
+    ax.set_zlabel('Z (m)')
+    ax.set_title('Real-Time Satellite Positions Around Earth', fontsize=14, pad=20)
+
+    scatters = {}
+    observer_x, observer_y, observer_z = calculations.latlonalt_to_ecef(observer_pos['lat'], observer_pos['lon'], observer_pos['alt'])
+
+    # Earth sphere
+    u, v = np.mgrid[0:2*np.pi:40j, 0:np.pi:20j]
+    earth_x = 6371000 * np.cos(u) * np.sin(v)
+    earth_y = 6371000 * np.sin(u) * np.sin(v)
+    earth_z = 6371000 * np.cos(v)
+
+    def update(frame):
+        ax.clear()
+        ax.set_xlim(-7000000, 7000000)
+        ax.set_ylim(-7000000, 7000000)
+        ax.set_zlim(-7000000, 7000000)
+        ax.set_xlabel('X (m)')
+        ax.set_ylabel('Y (m)')
+        ax.set_zlabel('Z (m)')
+        ax.set_title('Real-Time Satellite Positions Around Earth', fontsize=14, pad=20)
+        
+        ax.plot(observer_x, observer_y, observer_z, 's', color='black', label='Observer')
+
+        ax.plot_surface(earth_x, earth_y, earth_z, color='blue', alpha=0.3, edgecolor='none')
+        with lock:
+            sats_copy = dict(satellites)
+            for name, metrics in sats_copy.items():
+                if metrics:
+                    m = metrics[0]
+                    ecef = m['ecef']
+                    x, y, z = ecef[0], ecef[1], ecef[2]
+                    ax.plot([x],[y],[z],'o', label = name)
+            
+        ax.legend(loc='center left', bbox_to_anchor=(1.05, 0.5), fontsize='small', borderaxespad=0.)
+        fig.subplots_adjust(right=0.75)
+
+    ani = FuncAnimation(fig, update, interval=1000)
+    plt.show()
+
 
 # Displays table using the coolest thing curses
 def display_table_threaded(stdscr):
@@ -207,8 +268,11 @@ def display_table_threaded(stdscr):
 
 def main():
     set_output_log()
-    thread = threading.Thread(target=background_updater, daemon=True)
-    thread.start()
+    background_thread = threading.Thread(target=background_updater, daemon=True)
+    background_thread.start()
+    if args.plot:
+        plotting_thread = threading.Thread(target=plotting_updater, daemon = True)
+        plotting_thread.start()
     curses.wrapper(display_table_threaded)
 
 if __name__ == "__main__":

@@ -16,11 +16,19 @@ Tracker retrieves real-time satellite positional data from the N2YO API, process
 - curses (built-in on Linux/macOS, use `windows-curses` on Windows) 
 
 ## Installation 
-```bash pip install requests # For Windows only: pip install windows-curses ``` 
 
-## Usage Run the program with your N2YO API key: 
+```
+git clone https://github.com/yourusername/satellite-tracker.git
+cd BadSatData
+```
 
-```bash python satellite_tracker.py --api_key YOUR_API_KEY ``` 
+
+## Usage 
+Run the program with your N2YO API key: 
+
+```
+python satellite_tracker.py --api_key YOUR_API_KEY
+``` 
 
 Optional arguments: 
 - `--lat` : Observer latitude (default: 40.0) 
@@ -29,7 +37,16 @@ Optional arguments:
 - `--seconds` : Duration per fetch in seconds (default: 300) 
 - `--sat_ids` : List of NORAD satellite IDs to track (default: some cool ones + 32 PRNs)
 - `--show`: Which attributes to show (default: all)
+- `--plot`: Plotting using matplotlib updating every 300 s (default: False)
 
+
+```
+```
+python track.py --api_key YOUR_API_KEY --lat 30.0 --lon -90.0 --alt 10 --sat_ids "XXXXX, YYYYY" --plot
+```
+
+
+```
 ## Data Displayed Each satellite is displayed with metrics per timestamp: 
 - Visibility (True/False)
 - Angular velocity azimuth (deg/s)
