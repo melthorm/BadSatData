@@ -3,7 +3,7 @@
 ## Overview Satellite 
 Tracker retrieves real-time satellite positional data from the N2YO API, processes it to compute various metrics, and displays the results in a curses-based terminal UI. It supports continuous updates, interactive scrolling, and multi-satellite tracking. Kinda bad though
 
-![image](ExRunPlot.png "Example Run Terminal Display")
+![image](ExRun.png "Example Run Terminal Display")
 ![image2](ExRunPlot.png "Example Run Plot Display")
 
 ## Features 
