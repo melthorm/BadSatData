@@ -31,7 +31,7 @@ cd BadSatData
 Run the program with your N2YO API key: 
 
 ```
-python satellite_tracker.py --api_key YOUR_API_KEY
+python main.py --api_key YOUR_API_KEY
 ``` 
 
 Optional arguments: 
@@ -44,7 +44,7 @@ Optional arguments:
 - `--plot`: Plotting using matplotlib updating every 300 s (default: False)
 
 ```
-python track.py --api_key YOUR_API_KEY --lat 30.0 --lon -90.0 --alt 10 --sat_ids "XXXXX, YYYYY" --plot
+python main.py --api_key YOUR_API_KEY --lat 30.0 --lon -90.0 --alt 10 --sat_ids "XXXXX, YYYYY" --plot
 ```
 
 ## Data Displayed Each satellite is displayed with metrics per timestamp: 
