@@ -17,12 +17,14 @@ Tracker retrieves real-time satellite positional data from the N2YO API, process
 ## Requirements 
 - Python 3.7+ 
 - requests library 
-- curses (built-in on Linux/macOS, use `windows-curses` on Windows) 
+- curses 
+- matplotlib
+- numpy
 
 ## Installation 
 
 ```
-git clone https://github.com/yourusername/satellite-tracker.git
+git clone https://github.com/melthorm/BadSatData.git
 cd BadSatData
 ```
 
