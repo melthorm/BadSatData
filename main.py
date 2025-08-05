@@ -49,6 +49,7 @@ def parse_args():
         "slant_range_m", "time_delay_s", "snr", "unit_vector", "timestamp"
     ], help="Which metrics to display")
     parser.add_argument("--plot", action = "store_true", help = "Enable plot that refreshes every 300 s")
+    parser.add_argument("--store", action = "store_true", help = "Store data")
     args = parser.parse_args()
     return args
 
@@ -112,6 +113,20 @@ def background_updater():
         sleep_duration = max(0, SECONDS - elapsed)
         # -1 since calculations rely on two points (one in future)
         time.sleep(sleep_duration-1)
+
+# data
+def data_writer_thread():
+    os.makedirs("data", exist_ok=True)
+    while True:
+        time.sleep(SECONDS-1)
+        timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = os.path.join("data", f"sat_data_{timestamp}.json")
+
+        with lock:
+            sats_copy = {k: list(v) for k, v in satellites.items()}
+
+        with open(filename, "w") as f:
+            json.dump(sats_copy, f, indent=2, default=str)
 
 def plotting_updater():
     fig = plt.figure()
@@ -273,6 +288,9 @@ def main():
     if args.plot:
         plotting_thread = threading.Thread(target=plotting_updater, daemon = True)
         plotting_thread.start()
+    if args.store:
+        storing_thread = threading.Thread(target=data_writer_thread, daemon=True)
+        storing_thread.start()
     curses.wrapper(display_table_threaded)
 
 if __name__ == "__main__":

@@ -3,12 +3,16 @@
 ## Overview Satellite 
 Tracker retrieves real-time satellite positional data from the N2YO API, processes it to compute various metrics, and displays the results in a curses-based terminal UI. It supports continuous updates, interactive scrolling, and multi-satellite tracking. Kinda bad though
 
+![image](ExRunPlot.png "Example Run Terminal Display")
+![image2](ExRunPlot.png "Example Run Plot Display")
+
 ## Features 
 - Fetch and process satellite data concurrently. 
 - Calculate metrics including angular velocities, Doppler shift, slant range, visibility, and SNR. 
+- Plots cool stuff.
 - Display data in a scrollable curses interface. 
 - Configurable observer location and satellite list. 
-- Logs output for diagnostics. 
+- Logs data and output for diagnostics. 
 
 ## Requirements 
 - Python 3.7+ 
@@ -39,14 +43,10 @@ Optional arguments:
 - `--show`: Which attributes to show (default: all)
 - `--plot`: Plotting using matplotlib updating every 300 s (default: False)
 
-
-```
 ```
 python track.py --api_key YOUR_API_KEY --lat 30.0 --lon -90.0 --alt 10 --sat_ids "XXXXX, YYYYY" --plot
 ```
 
-
-```
 ## Data Displayed Each satellite is displayed with metrics per timestamp: 
 - Visibility (True/False)
 - Angular velocity azimuth (deg/s)
@@ -65,7 +65,7 @@ python track.py --api_key YOUR_API_KEY --lat 30.0 --lon -90.0 --alt 10 --sat_ids
 ## Notes 
 - The program continuously updates and maintains up to the specified seconds of data.
 - Metrics calculation accounts for observer location and satellite movement.
-- Logging occurs in a timestamped file under a `logs` directory. 
+- Logging occurs in a timestamped file under a `logs` directory, same for data (`data` directory). 
 
 ## License 
 MIT License
